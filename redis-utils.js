@@ -42,7 +42,7 @@ module.exports.server = function (config, callback) {
       )
 
       fs.writeSync(fd, data, 0, data.length)
-      rs = spawn([args], callback)
+      rs = spawn([path], callback)
     })
   }
 
