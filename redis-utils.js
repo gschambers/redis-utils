@@ -2,7 +2,8 @@ var rediis = require('redis-node'),
     cp = require('child_process'),
     regex = require('./regex'),
     redis = require('redis'),
-    fs = require('fs')
+    fs = require('fs'),
+    tmp = require('tmp')
 
 /******************************* SERVER/CLIENT ********************************/
 
@@ -33,7 +34,16 @@ module.exports.server = function (config, callback) {
 
   var onRunning = function (e, running) {
     if(running) return callback()
-    rs = spawn(args, callback)
+    
+    tmp.file(function (err, path, fd) {
+      var data = new Buffer(
+        'bind ' + config.host + '\nport ' + config.port,
+        'utf-8'
+      )
+
+      fs.writeSync(fd, data, 0, data.length)
+      rs = spawn([args], callback)
+    })
   }
 
   var onConfig = function () {
